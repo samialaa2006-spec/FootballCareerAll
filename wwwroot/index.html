@@ -1,0 +1,297 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0d3a2b">
+  <title>Seasons - Football Career & League Simulator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;800;900&family=Figtree:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body data-phase="academy">
+
+  <!-- Animated stadium background -->
+  <div class="stage" aria-hidden="true">
+    <div class="sky"></div>
+    <div class="floodlight fl-left"></div>
+    <div class="floodlight fl-right"></div>
+    <div class="crowd"></div>
+    <div class="turf"></div>
+    <div class="vignette"></div>
+  </div>
+
+  <main class="app">
+    <header class="topbar">
+      <span class="brand">Seasons</span>
+      <button id="muteBtn" class="music-btn" type="button" aria-pressed="true">
+        <span class="eq" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span id="muteLabel">Music on</span>
+      </button>
+    </header>
+
+    <!-- 1. Start & Player Creator -->
+    <section id="screen-start" class="screen panel" aria-labelledby="startTitle">
+      <h1 id="startTitle">Create your pro</h1>
+      <p class="lead">Customize your player's look, nationality, and real European club — then play live matches or simulate the league season by season.</p>
+
+      <!-- Live Player Avatar Preview -->
+      <div class="creator-preview">
+        <div id="previewAvatar" class="avatar-box"></div>
+        <div class="preview-meta">
+          <div id="previewClubBadge" class="club-pill">Arsenal • Premier League</div>
+          <div id="previewBio" class="hint">England • Right Foot • 180 cm • #9</div>
+        </div>
+      </div>
+
+      <div class="two-col">
+        <div class="field">
+          <label for="nameInput">Player Name</label>
+          <input id="nameInput" type="text" maxlength="24" placeholder="Alex Novak" autocomplete="off">
+        </div>
+        <div class="field">
+          <label for="natSelect">Nationality</label>
+          <select id="natSelect" class="select"></select>
+        </div>
+      </div>
+
+      <div class="two-col">
+        <div class="field">
+          <label for="leagueSelect">League</label>
+          <select id="leagueSelect" class="select"></select>
+        </div>
+        <div class="field">
+          <label for="clubSelect">Club</label>
+          <select id="clubSelect" class="select"></select>
+        </div>
+      </div>
+
+      <div class="three-col">
+        <div class="field">
+          <label for="footSelect">Preferred Foot</label>
+          <select id="footSelect" class="select">
+            <option value="Right">Right</option>
+            <option value="Left">Left</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="heightInput">Height (cm)</label>
+          <input id="heightInput" type="number" min="160" max="208" value="180" class="input-num">
+        </div>
+        <div class="field">
+          <label for="numberInput">Kit #</label>
+          <input id="numberInput" type="number" min="1" max="99" value="9" class="input-num">
+        </div>
+      </div>
+
+      <!-- Appearance Customizer -->
+      <fieldset class="field look-box">
+        <legend>Appearance</legend>
+        <div class="look-row">
+          <span>Skin Tone</span>
+          <div id="skinSwatches" class="swatches"></div>
+        </div>
+        <div class="look-row">
+          <span>Hair Color</span>
+          <div id="hairColorSwatches" class="swatches"></div>
+        </div>
+        <div class="two-col">
+          <div>
+            <label for="hairStyleSelect" class="sub-label">Hairstyle</label>
+            <select id="hairStyleSelect" class="select select-sm">
+              <option value="short">Short Crop</option>
+              <option value="fade">High Fade</option>
+              <option value="curly">Curly</option>
+              <option value="afro">Afro</option>
+              <option value="buzz">Buzz Cut</option>
+              <option value="long">Long Flow</option>
+              <option value="ponytail">Top Knot / Ponytail</option>
+            </select>
+          </div>
+          <div>
+            <label for="facialSelect" class="sub-label">Facial Hair</label>
+            <select id="facialSelect" class="select select-sm">
+              <option value="none">Clean Shaven</option>
+              <option value="stubble">Light Stubble</option>
+              <option value="beard">Full Beard</option>
+              <option value="mustache">Mustache</option>
+            </select>
+          </div>
+        </div>
+        <div class="look-row" style="margin-top:8px">
+          <span>Boot Color</span>
+          <div id="bootSwatches" class="swatches"></div>
+        </div>
+      </fieldset>
+
+      <fieldset class="field">
+        <legend>Position</legend>
+        <div id="posGrid" class="chips"></div>
+        <p id="posHelp" class="hint" aria-live="polite"></p>
+      </fieldset>
+
+      <button id="startBtn" class="btn" type="button">Sign Contract & Start Career</button>
+      <p id="startError" class="error" role="alert"></p>
+
+      <div id="savesBox" class="saves-box" hidden>
+        <h3>Saved careers</h3>
+        <ul id="savesList" class="saves"></ul>
+      </div>
+    </section>
+
+    <!-- 2. Career Hub & League Simulator -->
+    <section id="screen-hub" class="screen" hidden aria-label="Career">
+      <div class="panel hero-panel">
+        <div class="hero-top">
+          <div class="player-identity">
+            <div id="hubAvatar" class="avatar-mini"></div>
+            <div>
+              <h2 id="playerName" class="player-name"></h2>
+              <p id="playerMeta" class="meta"></p>
+              <p id="playerClubMeta" class="club-sub"></p>
+            </div>
+          </div>
+          <span id="phaseTag" class="phase-tag"></span>
+        </div>
+
+        <div class="hero">
+          <div class="ovr-wrap">
+            <div id="ovr" class="ovr" aria-label="Overall rating">0</div>
+            <div class="ovr-label">Overall</div>
+          </div>
+          <div class="pot">
+            <div id="pot" class="pot-num">0</div>
+            <div class="ovr-label">Potential</div>
+          </div>
+          <div class="season-tally">
+            <div id="seasonTally" class="tally-num">0G • 0A</div>
+            <div class="ovr-label">This Season</div>
+          </div>
+        </div>
+
+        <div id="attrs" class="attrs"></div>
+      </div>
+
+      <!-- Next Fixture & Playable Match / League Controls -->
+      <div class="panel fixture-panel">
+        <div class="fixture-head">
+          <span id="leagueTitle" class="ovr-label">Premier League • Matchday 1 / 22</span>
+          <span id="leaguePosBadge" class="pos-badge">Pos: #1</span>
+        </div>
+        <div id="nextFixtureBox" class="next-fixture"></div>
+
+        <div class="actions" style="margin-top:12px">
+          <button id="playInteractiveBtn" class="btn" type="button">Play Next Match (Live Pitch)</button>
+          <div class="actions-row">
+            <button id="simMatchBtn" class="btn btn-quiet" type="button">Sim Matchday</button>
+            <button id="playBtn" class="btn btn-quiet" type="button">Sim Full Season</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Interactive Pitch Canvas Modal / Panel -->
+      <div id="pitchModal" class="panel pitch-panel" hidden>
+        <div class="pitch-header">
+          <div>
+            <h3 id="pitchMatchTitle" style="margin:0">Matchday 1</h3>
+            <p id="pitchSub" class="hint" style="margin:2px 0 0">Move with Arrow keys / WASD or tap/drag on the pitch. Space/Click to Shoot or Tackle!</p>
+          </div>
+          <div id="pitchScoreboard" class="scoreboard">0 - 0</div>
+        </div>
+        <div class="pitch-hud">
+          <span id="pitchClock">0'</span>
+          <span id="pitchPlayerStats">You: 0G • 0A • Rating 6.5</span>
+        </div>
+        <canvas id="pitchCanvas" width="400" height="260" class="pitch-canvas"></canvas>
+        <div class="pitch-controls">
+          <button id="pitchActionBtn" class="btn" type="button">Kick / Shoot / Tackle (Space)</button>
+          <button id="pitchSkipBtn" class="btn btn-quiet" type="button">Finish Match Now</button>
+        </div>
+      </div>
+
+      <p id="status" class="status" aria-live="polite"></p>
+
+      <!-- Live League Standings Table -->
+      <div class="panel table-panel">
+        <div class="value-head" style="margin-bottom:8px">
+          <h3 style="margin:0">League Table</h3>
+          <button id="transferToggleBtn" class="btn-mini" type="button" hidden>Change Club</button>
+        </div>
+
+        <div id="transferBox" class="transfer-box" hidden>
+          <div class="two-col">
+            <select id="transferLeagueSelect" class="select select-sm"></select>
+            <select id="transferClubSelect" class="select select-sm"></select>
+          </div>
+          <button id="confirmTransferBtn" class="btn" style="height:42px;font-size:15px;margin-top:8px" type="button">Complete Transfer</button>
+        </div>
+
+        <div class="table-scroll">
+          <table class="league-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th style="text-align:left">Club</th>
+                <th>P</th>
+                <th>W</th>
+                <th>D</th>
+                <th>L</th>
+                <th>GD</th>
+                <th>Pts</th>
+              </tr>
+            </thead>
+            <tbody id="leagueTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Market Value Panel -->
+      <div class="panel value-panel">
+        <div class="value-head">
+          <div>
+            <div class="ovr-label">Market value</div>
+            <div id="value" class="value">€0</div>
+          </div>
+          <div id="delta" class="delta"></div>
+        </div>
+        <svg id="spark" class="spark" viewBox="0 0 300 84" preserveAspectRatio="none" role="img" aria-label="Market value by season" hidden></svg>
+        <p id="sparkHint" class="hint">The value chart appears after your first completed season.</p>
+      </div>
+
+      <div class="actions-row" style="margin-top:12px">
+        <button id="saveBtn" class="btn btn-quiet" type="button">Save career</button>
+        <button id="retireBtn" class="btn btn-quiet" type="button">Retire now</button>
+      </div>
+
+      <div id="newsPanel" class="panel news-panel" hidden>
+        <h3>News</h3>
+        <ul id="newsList" class="news-list"></ul>
+      </div>
+
+      <div class="panel log-panel">
+        <h3>Season history</h3>
+        <table class="log">
+          <thead><tr><th scope="col">Age</th><th scope="col">Club</th><th scope="col">Pos</th><th scope="col">OVR</th><th scope="col">G/A</th><th scope="col">Value</th></tr></thead>
+          <tbody id="logBody"></tbody>
+        </table>
+        <p id="logEmpty" class="hint">No completed seasons yet.</p>
+      </div>
+    </section>
+
+    <!-- 3. Retired -->
+    <section id="screen-retired" class="screen panel" hidden aria-labelledby="retiredTitle">
+      <h1 id="retiredTitle">Retired</h1>
+      <p id="retiredLead" class="lead"></p>
+      <dl id="retiredStats" class="stats"></dl>
+      <p id="retiredCard" class="final-card"></p>
+      <button id="againBtn" class="btn" type="button">Start a new career</button>
+    </section>
+
+    <p id="engineInfo" class="engine-info"></p>
+  </main>
+
+  <script src="audio.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
